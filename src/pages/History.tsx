@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 interface HistoryEntry {
   text: string;
   time: string;
+  cashout: string;
 }
 
 const History = () => {
@@ -23,10 +24,13 @@ const History = () => {
           {history.map((entry, index) => (
             <li
               key={index}
-              className="bg-gray-800 p-4 rounded-lg flex justify-between items-center"
+              className="bg-gray-800 p-4 rounded-lg flex flex-col items-start text-left w-full"
             >
-              <span className="text-xl">{entry.text}</span>
-              <span className="text-md text-gray-400">{entry.time}</span>
+              <div className="flex justify-between items-center w-full">
+                <span className="text-xl font-semibold">{entry.text}</span>
+                <span className="text-md text-gray-400">{entry.time}</span>
+              </div>
+              <span className="text-yellow-400 text-sm mt-2">{entry.cashout}</span>
             </li>
           ))}
         </ul>
