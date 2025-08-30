@@ -18,6 +18,9 @@ export default {
       },
     },
     extend: {
+      spacing: {
+        '30': '7.5rem', // Adicionando w-30/h-30
+      },
       fontFamily: {
         montserrat: ['"Montserrat"', 'sans-serif'],
       },

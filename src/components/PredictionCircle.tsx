@@ -3,21 +3,33 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Check } from "lucide-react";
 
+type AppState = "IDLE" | "PREDICTION_READY" | "AWAITING_ENTRY" | "ENTRY_COMPLETE";
+
 // Componente para a imagem do ícone
-const PredictionImage = ({ isActive }: { isActive: boolean }) => (
-  <div
-    className={cn(
-      "absolute top-8 flex items-center justify-center transition-all duration-500 ease-in-out",
-      isActive ? "h-12 w-12" : "h-20 w-20" // Menor quando ativo, maior quando inativo
-    )}
-  >
-    <img
-      src="https://ghmcjrvpolglidqunsde.supabase.co/storage/v1/object/public/media/app-1/images/1756537157642-gmlh7bgb9.png"
-      alt="Ícone da Predição"
-      className="w-full h-full object-contain"
-    />
-  </div>
-);
+const PredictionImage = ({ appState }: { appState: AppState }) => {
+  const isSpecialState = appState === "PREDICTION_READY" || appState === "AWAITING_ENTRY";
+
+  const containerClasses = cn(
+    "absolute flex items-center justify-center transition-all duration-500 ease-in-out",
+    {
+      // Estado Padrão (IDLE)
+      "h-20 w-20 top-8": !isSpecialState,
+      // Estados Especiais (PREDICTION_READY, AWAITING_ENTRY)
+      // 50% maior (de w-20 para w-30) e 15% para cima (de top-8 para top-2)
+      "w-30 h-30 top-2": isSpecialState,
+    }
+  );
+
+  return (
+    <div className={containerClasses}>
+      <img
+        src="https://ghmcjrvpolglidqunsde.supabase.co/storage/v1/object/public/media/app-1/images/1756537157642-gmlh7bgb9.png"
+        alt="Ícone da Predição"
+        className="w-full h-full object-contain"
+      />
+    </div>
+  );
+};
 
 const getRandom = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const getRandomFloat = (min: number, max: number) => Math.random() * (max - min) + min;
@@ -27,8 +39,6 @@ interface HistoryEntry {
   cashout: string;
   time: string;
 }
-
-type AppState = "IDLE" | "PREDICTION_READY" | "AWAITING_ENTRY" | "ENTRY_COMPLETE";
 
 export default function PredictionCircle() {
   const [appState, setAppState] = useState<AppState>("IDLE");
@@ -163,7 +173,6 @@ export default function PredictionCircle() {
   };
 
   const { title, subtitle, showTimer, circleClass, buttonText, buttonDisabled, showButton } = renderContent();
-  const isActive = appState !== "IDLE";
 
   return (
     <div className="flex flex-col items-center justify-center w-full gap-2">
@@ -173,7 +182,7 @@ export default function PredictionCircle() {
       {showTimer && <div className="text-7xl font-bold text-red-500 my-4">{timer}s</div>}
 
       <div className={cn("relative w-80 h-80 rounded-full flex flex-col items-center justify-center text-center p-4 transition-all duration-300 mt-4", circleClass)}>
-        {appState !== "ENTRY_COMPLETE" && <PredictionImage isActive={isActive} />}
+        {appState !== "ENTRY_COMPLETE" && <PredictionImage appState={appState} />}
         
         {appState === "PREDICTION_READY" && (
           <div className="flex flex-col gap-4 mt-24 text-center">
