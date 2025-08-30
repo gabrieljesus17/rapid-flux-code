@@ -20,6 +20,7 @@ export default {
     extend: {
       fontFamily: {
         montserrat: ['"Montserrat"', 'sans-serif'],
+        "bp-imperial": ['"BP Imperial"', "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

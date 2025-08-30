@@ -3,27 +3,18 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Check } from "lucide-react";
 
-// Componente para o ícone do avião estilizado
-const AviatorIcon = ({ isActive }: { isActive: boolean }) => (
+// Componente para o logo "MF"
+const LogoIcon = ({ isActive }: { isActive: boolean }) => (
   <div
     className={cn(
       "absolute top-8 flex items-center justify-center transition-all duration-500 ease-in-out",
-      isActive ? "h-12 w-12" : "h-20 w-20" // Menor quando ativo, maior quando inativo
+      isActive ? "h-12 w-12" : "h-20 w-20"
     )}
   >
-    <svg
-      width="100%"
-      height="100%"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="text-white transform -rotate-45"
-    >
-      <path d="M2 12l20-7-9 7 9 7-20-7z" />
-    </svg>
+    <p className="font-bp-imperial font-bold italic uppercase text-6xl">
+      <span className="text-red-600">M</span>
+      <span className="text-white">F</span>
+    </p>
   </div>
 );
 
@@ -181,7 +172,7 @@ export default function PredictionCircle() {
       {showTimer && <div className="text-7xl font-bold text-red-500 my-4">{timer}s</div>}
 
       <div className={cn("relative w-80 h-80 rounded-full flex flex-col items-center justify-center text-center p-4 transition-all duration-300 mt-4", circleClass)}>
-        {appState !== "ENTRY_COMPLETE" && <AviatorIcon isActive={isActive} />}
+        {appState !== "ENTRY_COMPLETE" && <LogoIcon isActive={isActive} />}
         
         {appState === "PREDICTION_READY" && (
           <div className="flex flex-col gap-4 mt-24 text-center">
