@@ -11,7 +11,7 @@ const BoltIcon = ({ isActive }: { isActive: boolean }) => (
       isActive ? "h-12 w-12" : "h-20 w-20" // Menor quando ativo, maior quando inativo
     )}
   >
-    <Bolt className="text-red-500 h-full w-full" fill="currentColor" />
+    <Bolt className="text-red-500 h-full w-full" />
   </div>
 );
 
