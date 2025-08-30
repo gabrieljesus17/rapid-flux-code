@@ -1,17 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
-import { Check, Send } from "lucide-react";
+import { Check } from "lucide-react";
 
-// Componente para o ícone de avião de papel estilizado
-const PaperPlaneIcon = ({ isActive }: { isActive: boolean }) => (
+// Componente para a imagem do ícone
+const PredictionImage = ({ isActive }: { isActive: boolean }) => (
   <div
     className={cn(
       "absolute top-8 flex items-center justify-center transition-all duration-500 ease-in-out",
       isActive ? "h-12 w-12" : "h-20 w-20" // Menor quando ativo, maior quando inativo
     )}
   >
-    <Send className="text-red-500 w-full h-full" />
+    <img
+      src="https://ghmcjrvpolglidqunsde.supabase.co/storage/v1/object/public/media/app-1/images/1756537157642-gmlh7bgb9.png"
+      alt="Ícone da Predição"
+      className="w-full h-full object-contain"
+    />
   </div>
 );
 
@@ -169,7 +173,7 @@ export default function PredictionCircle() {
       {showTimer && <div className="text-7xl font-bold text-red-500 my-4">{timer}s</div>}
 
       <div className={cn("relative w-80 h-80 rounded-full flex flex-col items-center justify-center text-center p-4 transition-all duration-300 mt-4", circleClass)}>
-        {appState !== "ENTRY_COMPLETE" && <PaperPlaneIcon isActive={isActive} />}
+        {appState !== "ENTRY_COMPLETE" && <PredictionImage isActive={isActive} />}
         
         {appState === "PREDICTION_READY" && (
           <div className="flex flex-col gap-4 mt-24 text-center">
