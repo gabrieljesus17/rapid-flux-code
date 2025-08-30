@@ -28,6 +28,7 @@ const AviatorIcon = ({ isActive }: { isActive: boolean }) => (
 );
 
 const getRandom = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+const getRandomFloat = (min: number, max: number) => Math.random() * (max - min) + min;
 
 interface HistoryEntry {
   text: string;
@@ -40,6 +41,7 @@ type AppState = "IDLE" | "PREDICTION_READY" | "AWAITING_ENTRY" | "ENTRY_COMPLETE
 export default function PredictionCircle() {
   const [appState, setAppState] = useState<AppState>("IDLE");
   const [timer, setTimer] = useState(0);
+  const [predictionTitle, setPredictionTitle] = useState("");
   const [cashoutText, setCashoutText] = useState("");
 
   const saveToHistory = useCallback((text: string, cashout: string) => {
@@ -53,12 +55,34 @@ export default function PredictionCircle() {
   useEffect(() => {
     if (appState === "PREDICTION_READY") {
       setTimer(getRandom(25, 50));
-      const minCashout = getRandom(150, 800) / 100;
-      const maxCashout = getRandom(Math.floor(minCashout * 100) + 50, 1000) / 100;
+      
+      const predictionType = getRandom(0, 2);
+      let minCashout, maxCashout;
+      let currentPredictionTitle = "";
+
+      switch (predictionType) {
+        case 0: // Cashout rápido
+          currentPredictionTitle = "💰 Cashout rápido";
+          minCashout = getRandomFloat(1.5, 2.8);
+          maxCashout = getRandomFloat(minCashout + 0.1, 3.1);
+          break;
+        case 1: // Sinal positivo
+          currentPredictionTitle = "✅ Sinal positivo: Entrada recomendada";
+          minCashout = getRandomFloat(2.81, 5.8);
+          maxCashout = getRandomFloat(minCashout + 0.5, 11.0);
+          break;
+        case 2: // Risco alto
+        default:
+          currentPredictionTitle = "⚠️ Atenção: rodada de risco alto";
+          minCashout = getRandomFloat(1.5, 2.8);
+          maxCashout = getRandomFloat(minCashout + 0.1, 6.8);
+          break;
+      }
+
+      setPredictionTitle(currentPredictionTitle);
       const cashoutString = `Realizar saída entre ${minCashout.toFixed(2)}x até ${maxCashout.toFixed(2)}x`;
-      const predictionText = "💰 Cashout rápido"; // Texto atualizado
       setCashoutText(cashoutString);
-      saveToHistory(predictionText, cashoutString);
+      saveToHistory(currentPredictionTitle, cashoutString);
     }
   }, [appState, saveToHistory]);
 
@@ -124,10 +148,10 @@ export default function PredictionCircle() {
         };
       case "ENTRY_COMPLETE":
         return {
-          title: "Entrada Concluída", // Título atualizado
+          title: "Entrada Concluída",
           subtitle: null,
           showTimer: false,
-          circleClass: "bg-black animate-flame border-2 border-transparent",
+          circleClass: "bg-black border-2 border-green-500 shadow-[0_0_25px_rgba(0,255,0,0.7)]",
           buttonText: "Entrada Concluída ✅",
           buttonDisabled: true,
           showButton: true,
@@ -161,7 +185,7 @@ export default function PredictionCircle() {
         
         {appState === "PREDICTION_READY" && (
           <div className="flex flex-col gap-4 mt-24 text-center">
-            <p className="text-2xl font-semibold text-white">💰 Cashout rápido</p>
+            <p className="text-2xl font-semibold text-white">{predictionTitle}</p>
             <p className="text-lg font-bold text-yellow-300">{cashoutText}</p>
           </div>
         )}
