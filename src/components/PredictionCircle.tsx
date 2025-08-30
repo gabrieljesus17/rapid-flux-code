@@ -53,10 +53,10 @@ export default function PredictionCircle() {
   useEffect(() => {
     if (appState === "PREDICTION_READY") {
       setTimer(getRandom(25, 50));
-      const minCashout = getRandom(150, 800) / 100;
-      const maxCashout = getRandom(Math.floor(minCashout * 100) + 50, 1000) / 100;
+      const minCashout = getRandom(101, 280) / 100; // Limite de X: 1.01x a 2.80x
+      const maxCashout = getRandom(Math.floor(minCashout * 100) + 1, 310) / 100; // Limite de Y: (X + 0.01)x a 3.10x
       const cashoutString = `Realizar saída entre ${minCashout.toFixed(2)}x até ${maxCashout.toFixed(2)}x`;
-      const predictionText = "💰 Cashout rápido"; // Texto atualizado
+      const predictionText = "💰 Cashout rápido";
       setCashoutText(cashoutString);
       saveToHistory(predictionText, cashoutString);
     }
@@ -124,10 +124,10 @@ export default function PredictionCircle() {
         };
       case "ENTRY_COMPLETE":
         return {
-          title: "Entrada Concluída", // Título atualizado
+          title: "Entrada Concluída",
           subtitle: null,
           showTimer: false,
-          circleClass: "bg-black animate-flame border-2 border-transparent",
+          circleClass: "bg-black border-2 border-green-500", // Borda verde na conclusão
           buttonText: "Entrada Concluída ✅",
           buttonDisabled: true,
           showButton: true,
