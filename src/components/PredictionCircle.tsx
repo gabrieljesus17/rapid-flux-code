@@ -159,7 +159,7 @@ export default function PredictionCircle() {
         <AviatorIcon isActive={isActive} />
         {isActive && appState !== "AWAITING_ENTRY" && appState !== "ENTRY_COMPLETE" && (
           <div className="flex flex-col gap-4 mt-24 text-center">
-            <p className="text-2xl font-semibold text-white font-montserrat">💰 Cashout cedo sugerido</p>
+            <p className="text-2xl font-semibold text-white">💰 Cashout cedo sugerido</p>
             <p className="text-lg font-bold text-yellow-300">{cashoutText}</p>
           </div>
         )}
