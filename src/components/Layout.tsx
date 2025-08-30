@@ -19,6 +19,9 @@ const Layout = () => {
           <NavLink to="/history" className={getLinkClass}>
             Histórico
           </NavLink>
+          <NavLink to="/tutorial" className={getLinkClass}>
+            Tutorial
+          </NavLink>
         </nav>
       </header>
       <main className="flex-grow flex flex-col items-center justify-center p-4 text-center">

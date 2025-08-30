@@ -8,6 +8,7 @@ import Predictions from "./pages/Predictions";
 import History from "./pages/History";
 import Layout from "./components/Layout";
 import NotFound from "./pages/NotFound";
+import Tutorial from "./pages/Tutorial";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
           <Route element={<Layout />}>
             <Route path="/predictions" element={<Predictions />} />
             <Route path="/history" element={<History />} />
+            <Route path="/tutorial" element={<Tutorial />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
