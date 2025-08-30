@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { Check } from "lucide-react";
 
 // Componente para o ícone do avião estilizado
 const AviatorIcon = ({ isActive }: { isActive: boolean }) => (
@@ -55,7 +56,7 @@ export default function PredictionCircle() {
       const minCashout = getRandom(150, 800) / 100;
       const maxCashout = getRandom(Math.floor(minCashout * 100) + 50, 1000) / 100;
       const cashoutString = `Realizar saída entre ${minCashout.toFixed(2)}x até ${maxCashout.toFixed(2)}x`;
-      const predictionText = "💰 Cashout cedo sugerido";
+      const predictionText = "💰 Cashout rápido"; // Texto atualizado
       setCashoutText(cashoutString);
       saveToHistory(predictionText, cashoutString);
     }
@@ -123,7 +124,7 @@ export default function PredictionCircle() {
         };
       case "ENTRY_COMPLETE":
         return {
-          title: "Entrada em andamento...",
+          title: "Entrada Concluída", // Título atualizado
           subtitle: null,
           showTimer: false,
           circleClass: "bg-black animate-flame border-2 border-transparent",
@@ -156,12 +157,17 @@ export default function PredictionCircle() {
       {showTimer && <div className="text-7xl font-bold text-red-500 my-4">{timer}s</div>}
 
       <div className={cn("relative w-80 h-80 rounded-full flex flex-col items-center justify-center text-center p-4 transition-all duration-300 mt-4", circleClass)}>
-        <AviatorIcon isActive={isActive} />
-        {isActive && appState !== "AWAITING_ENTRY" && appState !== "ENTRY_COMPLETE" && (
+        {appState !== "ENTRY_COMPLETE" && <AviatorIcon isActive={isActive} />}
+        
+        {appState === "PREDICTION_READY" && (
           <div className="flex flex-col gap-4 mt-24 text-center">
-            <p className="text-2xl font-semibold text-white">💰 Cashout cedo sugerido</p>
+            <p className="text-2xl font-semibold text-white">💰 Cashout rápido</p>
             <p className="text-lg font-bold text-yellow-300">{cashoutText}</p>
           </div>
+        )}
+
+        {appState === "ENTRY_COMPLETE" && (
+          <Check className="text-green-500" size={96} />
         )}
       </div>
 
