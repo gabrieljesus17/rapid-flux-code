@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 
-// Componente para o ícone do avião estilizado e mais realista
+// Componente para o ícone do avião estilizado
 const AviatorIcon = ({ isActive }: { isActive: boolean }) => (
   <div
     className={cn(
@@ -14,11 +14,14 @@ const AviatorIcon = ({ isActive }: { isActive: boolean }) => (
       width="100%"
       height="100%"
       viewBox="0 0 24 24"
-      fill="currentColor"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className="text-white transform -rotate-45"
     >
-      <path d="M21.43,12.16l-6-3.33A2,2,0,0,0,14,10.55V11H8.5A2.5,2.5,0,0,0,6,13.5v1A2.5,2.5,0,0,0,8.5,17H14v.45a2,2,0,0,0,1.43,1.92l6-3.33A2,2,0,0,0,21.43,12.16Z" />
-      <path d="M5,14.5v-1A2.5,2.5,0,0,0,2.5,11h-1A1.5,1.5,0,0,0,0,12.5v0A1.5,1.5,0,0,0,1.5,14h1A2.5,2.5,0,0,0,5,14.5Z" />
+      <path d="M2 12l20-7-9 7 9 7-20-7z" />
     </svg>
   </div>
 );
