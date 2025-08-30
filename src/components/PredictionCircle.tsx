@@ -3,20 +3,29 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 
 // Componente para o ícone do avião estilizado
-const AviatorIcon = () => (
-  <svg
-    width="60"
-    height="60"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="text-white transform -rotate-45" // Inclinação para cima
+const AviatorIcon = ({ isActive }: { isActive: boolean }) => (
+  <div
+    className={cn(
+      "absolute flex items-center justify-center transition-all duration-500 ease-in-out",
+      isActive
+        ? "top-8 h-12 w-12" // Posição superior e tamanho menor
+        : "inset-0 h-20 w-20" // Centralizado e tamanho maior
+    )}
   >
-    <path d="M2 12l20-7-9 7 9 7-20-7z" />
-  </svg>
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="text-white transform -rotate-45"
+    >
+      <path d="M2 12l20-7-9 7 9 7-20-7z" />
+    </svg>
+  </div>
 );
 
 const getRandom = (min: number, max: number) => Math.random() * (max - min) + min;
@@ -27,11 +36,12 @@ interface HistoryEntry {
   time: string;
 }
 
+type AppState = "IDLE" | "PREDICTION_READY";
+
 export default function PredictionCircle() {
-  const [predictionActive, setPredictionActive] = useState(false);
+  const [appState, setAppState] = useState<AppState>("IDLE");
   const [timer, setTimer] = useState(0);
   const [cashoutText, setCashoutText] = useState("");
-  const [analysisTimer, setAnalysisTimer] = useState(Math.floor(getRandom(14, 120)));
   const [isExpiring, setIsExpiring] = useState(false);
   const [isGenerationFrozen, setIsGenerationFrozen] = useState(false);
 
@@ -46,11 +56,9 @@ export default function PredictionCircle() {
     localStorage.setItem("aviator_history", JSON.stringify(updatedHistory));
   }, []);
 
-  const triggerPrediction = useCallback(() => {
-    if (isGenerationFrozen) return;
-
-    setPredictionActive(true);
-    const entryTime = Math.floor(getRandom(25, 50)); // Ajustado para 25-50s
+  const triggerPrediction = () => {
+    setAppState("PREDICTION_READY");
+    const entryTime = Math.floor(getRandom(25, 50));
     setTimer(entryTime);
 
     const minCashout = getRandom(1.5, 8.0);
@@ -61,79 +69,66 @@ export default function PredictionCircle() {
     setCashoutText(cashoutString);
     saveToHistory(predictionText, cashoutString);
 
-    // Congela a geração manual por 25 segundos
     setIsGenerationFrozen(true);
     setTimeout(() => {
       setIsGenerationFrozen(false);
     }, 25000);
+  };
 
-  }, [saveToHistory, isGenerationFrozen]);
+  const handleGenerateClick = () => {
+    if (isGenerationFrozen) return;
+    triggerPrediction();
+  };
 
   useEffect(() => {
+    if (appState === "IDLE") return;
+
     const interval = setInterval(() => {
-      if (predictionActive) {
-        setTimer(prev => {
-          if (prev <= 6 && prev > 1) setIsExpiring(true);
-          if (prev <= 1) {
-            setPredictionActive(false);
-            setIsExpiring(false);
-            setAnalysisTimer(Math.floor(getRandom(14, 120)));
-            return 0;
-          }
-          return prev - 1;
-        });
-      } else {
-        setAnalysisTimer(prev => {
-          if (prev <= 1) {
-            triggerPrediction();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }
+      setTimer(prev => {
+        if (prev <= 6 && prev > 1) setIsExpiring(true);
+        if (prev <= 1) {
+          setAppState("IDLE");
+          setIsExpiring(false);
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
     return () => clearInterval(interval);
-  }, [predictionActive, triggerPrediction]);
+  }, [appState]);
 
-  const renderTimer = () => {
-    if (predictionActive) {
-      return `${timer}s`;
-    }
-    const minutes = Math.floor(analysisTimer / 60);
-    const seconds = analysisTimer % 60;
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  };
+  const isActive = appState === "PREDICTION_READY";
 
   return (
     <div className="flex flex-col items-center justify-center w-full gap-2">
-      {predictionActive ? (
+      {isActive ? (
         <>
           <h2 className="text-3xl font-bold">Predição Detectada 🔥</h2>
           <p className="text-xl text-gray-400 h-6">Entrada disponível em:</p>
         </>
       ) : (
         <>
-          <h2 className="text-3xl font-bold">Próxima Predição em:</h2>
-          <p className="text-xl text-gray-400 h-6">Analisando predição...</p>
+          <h2 className="text-3xl font-bold">Clique no botão para gerar um sinal</h2>
+          <p className="text-lg text-gray-400 h-6">Após gerar o sinal, aguarde o tempo acabar para fazer a Aposta!</p>
         </>
       )}
 
-      <div className="text-7xl font-bold text-red-500 my-4">{renderTimer()}</div>
+      {isActive && (
+        <div className="text-7xl font-bold text-red-500 my-4">{timer}s</div>
+      )}
 
       <div
         className={cn(
-          "relative w-80 h-80 rounded-full flex flex-col items-center justify-center text-center p-4 transition-all duration-300",
-          predictionActive
-            ? "bg-red-600 animate-flame"
-            : "bg-gray-800 border-2 border-red-600 animate-glow"
+          "relative w-80 h-80 rounded-full flex flex-col items-center justify-center text-center p-4 transition-all duration-300 mt-4",
+          isActive
+            ? "bg-black animate-flame border-2 border-transparent"
+            : "bg-black border-2 border-red-600 animate-glow"
         )}
       >
-        <div className="absolute top-10">
-          <AviatorIcon />
-        </div>
+        <AviatorIcon isActive={isActive} />
         
-        {predictionActive && (
-          <div className="flex flex-col gap-4 mt-20 text-center">
+        {isActive && (
+          <div className="flex flex-col gap-4 mt-24 text-center">
             <p className="text-2xl font-semibold text-white">💰 Cashout cedo sugerido</p>
             <p className="text-lg font-bold text-yellow-300">{cashoutText}</p>
           </div>
@@ -147,11 +142,16 @@ export default function PredictionCircle() {
       )}
 
       <Button
-        onClick={triggerPrediction}
+        onClick={handleGenerateClick}
         disabled={isGenerationFrozen}
-        className="w-full max-w-md bg-gray-700 hover:bg-gray-600 text-white font-bold text-xl p-7 mt-6 disabled:bg-gray-800 disabled:cursor-not-allowed"
+        className={cn(
+          "w-full max-w-md font-bold text-xl p-7 mt-6 transition-colors",
+          isGenerationFrozen
+            ? "bg-gray-800 cursor-not-allowed text-gray-500"
+            : "bg-black border border-red-500 text-white hover:bg-red-900/50"
+        )}
       >
-        {isGenerationFrozen ? `Aguarde...` : "Gerar Manualmente"}
+        {isGenerationFrozen ? `Aguarde...` : "Gerar Predição"}
       </Button>
     </div>
   );
